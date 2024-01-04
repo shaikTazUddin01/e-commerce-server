@@ -29,18 +29,32 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        const CategoryCollection = client.db('E-commerce').collection('categoryList')
 
-//post category
-        app.post('/createCategoryCollection', async(req, res) => {
+        const categoryCollection = client.db('E-commerce').collection('categoryList')
+
+        const userCollection = client.db('E-commerce').collection('users')
+        // post user collection
+        app.post('/users', async (req, res) => {
+            const user = req.body
+            const result = await userCollection.insertOne(user)
+            res.send(result)
+            console.log(result)
+        })
+        //post category
+        app.post('/createCategoryCollection', async (req, res) => {
             const category = req.body;
             // console.log(category)
-            const result =await CategoryCollection.insertOne(category);
+            const result = await categoryCollection.insertOne(category);
             console.log(result)
             res.send(result)
 
         })
-
+        //get category data
+        app.get('/categories', async (req, res) => {
+            const result = await categoryCollection.find().toArray()
+            res.send(result)
+            console.log(result)
+        })
 
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
